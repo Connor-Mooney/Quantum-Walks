@@ -1,6 +1,5 @@
-from GluedTrees import GluedTree, ReducedGluedTree
-g = GluedTree(3)
+from GluedTrees import ReducedGluedTree
 
-redg = ReducedGluedTree(3)
+redg = ReducedGluedTree(5)
 
 redg.display()

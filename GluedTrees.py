@@ -81,10 +81,6 @@ class ReducedGluedTree(Graph):
 
     def fill_adjacency_matrix(self):
         self.adjacencyMatrix = np.zeros((2*self.n, 2*self.n))
-        for i in range(2 * self.n):
-            if i > 0:
-                self.adjacencyMatrix[i, i - 1] = 1
-                self.adjacencyMatrix[i - 1, i] = 1
-            if i < 2 * self.n - 1:
-                self.adjacencyMatrix[i, i + 1] = 1
-                self.adjacencyMatrix[i + 1, i] = 1
+        for i in range(2 * self.n - 1):
+            self.adjacencyMatrix[i, i+1] = 2**(min(i + 1, 2 * self.n - 1 - i))
+            self.adjacencyMatrix[i+1, i] = 2**(min(i + 1, 2 * self.n - 1 - i))
