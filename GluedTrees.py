@@ -50,7 +50,7 @@ class GluedTree:
             cycle_array.append(i)
             cycle_array.append(i)
         j = 2**(self.n - 1) - 1
-        while(not cycle_array):
+        while not cycle_array:
             temp = cycle_array.pop(np.randint(cycle_array.len()+1))
             self.adjacencyMatrix[j, temp] = 1
             self.adjacencyMatrix[temp, j] = 1
