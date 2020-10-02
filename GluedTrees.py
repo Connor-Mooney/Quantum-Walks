@@ -45,7 +45,16 @@ class GluedTree:
             self.adjacencyMatrix[2*2**self.n - 3 - i, 2*2**self.n - 3 - int(next_layer + 2*(i-(2**layer_num - 1)) + 1)] = 1
             self.adjacencyMatrix[2*2**self.n - 3 - int(next_layer + 2*(i-(2**layer_num - 1)) + 1), 2*2**self.n - 3 - i] = 1
         # Next comes making the cycle that actually "glues" the trees together
-        for i in range (2**n-1, 2**n - 1 + 2**n): #not quite it but will edit it later
+        cycle_array = []
+        for i in range (2**self.n-1, 2**self.n - 1 + 2**(self.n - 1)): #We're gonna make python array of length 2^(n-1)
+            cycle_array.append(i)
+            cycle_array.append(i)
+        j = 2**(self.n - 1) - 1
+        while(not cycle_array):
+            temp = cycle_array.pop(np.randint(cycle_array.len()+1))
+            self.adjacencyMatrix[j, temp] = 1
+            self.adjacencyMatrix[temp, j] = 1
+            j += 1
 
         print(self.adjacencyMatrix)
 
