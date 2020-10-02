@@ -1,18 +1,30 @@
 import numpy as np
 
 
-class GluedTree:
+class Graph:
+    def __init__(self, n):
+        self.n = n
+        self.adjacencyMatrix = None
+        self.fill_adjacency_matrix()
+
+    def fill_adjacency_matrix(self):
+        pass
+
+    def display(self):
+        print(self.adjacencyMatrix)
+
+
+class GluedTree(Graph):
     """This class gives full binary glued trees where each tree has depth n,
         and the leaves of each tree is connected to two leaves of the other tree randomly.
     """
     def __init__(self, n):
-        self.n = n
-        self.adjacencyMatrix = np.zeros((2*(2**n-1), 2*(2**n-1)))
-        self.fill_adjacency_matrix()
+        super().__init__(n)
 
     def fill_adjacency_matrix(self):
 
-        """ Fills out the adjacency matrix of a glued tree, labelling vertices by their number, starting at 0 with the top like so
+        """ Fills out the adjacency matrix of a glued tree, labelling vertices by their number, starting at 0 with the
+        top like so
                     0
                    / \
                   1   2
@@ -22,13 +34,14 @@ class GluedTree:
                 .
                 .
         """
+        self.adjacencyMatrix = np.zeros((2*(2**self.n - 1), 2*(2**self.n - 1)))
         for i in range(2**(self.n-1)-1):
             # First we must find i's layer, which is layerNum
             layer_num = np.floor(np.log2(i+1))
             # Then we find where the next layer's nodes start off in numbering
             next_layer = 2**(layer_num + 1)-1
             # We then set the children of i to be adjacent to i
-            self.adjacencyMatrix[i,int(next_layer + 2*(i-(2**layer_num - 1)))] = 1
+            self.adjacencyMatrix[i, int(next_layer + 2*(i-(2**layer_num - 1)))] = 1
             self.adjacencyMatrix[int(next_layer + 2*(i-(2**layer_num - 1))), i] = 1
             self.adjacencyMatrix[i, int(next_layer + 2*(i-(2**layer_num - 1)) + 1)] = 1
             self.adjacencyMatrix[int(next_layer + 2*(i-(2**layer_num - 1)) + 1), i] = 1
@@ -46,18 +59,32 @@ class GluedTree:
             self.adjacencyMatrix[2*2**self.n - 3 - int(next_layer + 2*(i-(2**layer_num - 1)) + 1), 2*2**self.n - 3 - i] = 1
         # Next comes making the cycle that actually "glues" the trees together
         cycle_array = []
-        for i in range (2**self.n-1, 2**self.n - 1 + 2**(self.n - 1)): #We're gonna make python array of length 2^(n-1)
+        for i in range (2**self.n-1, 2**self.n - 1 + 2**(self.n - 1)):
+            # Making an array with every leaf of the 2nd tree twice
             cycle_array.append(i)
             cycle_array.append(i)
         j = 2**(self.n - 1) - 1
-        while not cycle_array:
-            temp = cycle_array.pop(np.randint(cycle_array.len()+1))
-            self.adjacencyMatrix[j, temp] = 1
-            self.adjacencyMatrix[temp, j] = 1
-            j += 1
+        while not len(cycle_array) == 0:
+            # Assigning two of the leaves to each leaf.
+            # This doesn't really work always, because it may re-pick the same leaf so that needs fixing
+            # But as for now, we aren't using this class for our calculations, we can worry about that later
+            temp = cycle_array.pop(np.random.randint(len(cycle_array)))
+            self.adjacencyMatrix[int(np.floor(j)), temp] = 1
+            self.adjacencyMatrix[temp, int(np.floor(j))] = 1
+            j += 0.5
 
-        print(self.adjacencyMatrix)
 
-class ReducedGluedTree:
+class ReducedGluedTree(Graph):
     """This is the class we'll probably be doing most of our analysis on"""
     def __init__(self, n):
+        super().__init__(n)
+
+    def fill_adjacency_matrix(self):
+        self.adjacencyMatrix = np.zeros((2*self.n, 2*self.n))
+        for i in range(2 * self.n):
+            if i > 0:
+                self.adjacencyMatrix[i, i - 1] = 1
+                self.adjacencyMatrix[i - 1, i] = 1
+            if i < 2 * self.n - 1:
+                self.adjacencyMatrix[i, i + 1] = 1
+                self.adjacencyMatrix[i + 1, i] = 1
