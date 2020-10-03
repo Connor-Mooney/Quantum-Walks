@@ -1,5 +1,13 @@
 import numpy as np
-import qiskit
+import matplotlib.pyplot as plt
+
+# importing Qiskit
+from qiskit import IBMQ, Aer
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, execute
+
+# import basic plot tools
+from qiskit.visualization import plot_histogram
+
 from GluedTrees import Graph
 
 
@@ -47,3 +55,8 @@ class QuantumWalk:
 
     def phase_estimation(self, ancilla_bits, starting_state):
         # need to think this through
+        phase_estimator = QuantumCircuit(ancilla_bits + 2**np.ceiling(np.log2(len(self.edge_list))), ancilla_bits)
+        # Initialise starting state
+
+        # Run through
+        phase_estimator.draw()
