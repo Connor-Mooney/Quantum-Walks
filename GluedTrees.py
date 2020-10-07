@@ -6,10 +6,16 @@ class Graph:
         self.n = n
         self.adjacencyMatrix = None
         self.fill_adjacency_matrix()
-
+        self.A = set()
+        self.B = set()
+        self.fill_bipartite_sets()
+        
     def fill_adjacency_matrix(self):
         pass
 
+    def fill_bipartite_sets():
+        pass
+    
     def display(self):
         print(self.adjacencyMatrix)
 
@@ -73,6 +79,17 @@ class GluedTree(Graph):
             self.adjacencyMatrix[temp, int(np.floor(j))] = 1
             j += 0.5
 
+    def fill_bipartite_sets(self):
+        running_counter = 0
+        flipper = False
+        for i in range(2*self.n):
+            for j in range(running_counter, 2**min(i, 2*(2**self.n-1)-1-i)):
+                if i%2 == 0:
+                    self.B.add(running_counter + j)
+                else:
+                    self.A.add(running_counter + j)
+            running_counter += j
+            
 
 class ReducedGluedTree(Graph):
     """This is the class we'll probably be doing most of our analysis on"""
@@ -89,3 +106,10 @@ class ReducedGluedTree(Graph):
         for i in range(self.n, 2*self.n-1):
             self.adjacencyMatrix[i, i+1] = 1
             self.adjacencyMatrix[i+1, i] = 2
+            
+    def fill_bipartite_sets(self):
+        for i in range(2 * self.n):
+            if i%2 == 0:
+                self.A.add(i)
+            else:
+                self.B.add(i)

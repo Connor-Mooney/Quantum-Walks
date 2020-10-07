@@ -30,11 +30,13 @@ class QuantumWalk:
         R_A = np.zeros((len(self.edge_list), len(self.edge_list)))
         # This relies on the properties of a reduced glued tree
         for i in range(2 * self.g.n):
-            if i%2 == 1:
+            if i in self.g.B:
                 R_B += self.diffuser(i)
             else:
                 R_A += self.diffuser(i)
         # Setting the quantum walk operator to be R_AR_B
+        print(R_B)
+        print(R_A)
         self.quantumWalkOperator = R_A.dot(R_B)
 
     def diffuser(self, vertex):
@@ -44,8 +46,8 @@ class QuantumWalk:
         # Filling out ket_psi_v and the identity on the subspace we want
         for e in self.edge_list:
             if vertex in e:
-                iter_e = iter(e)
-                ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.g.adjacencyMatrix[next(iter_e), next(iter_e)])
+                (other_vertex, ) = e.difference({vertex})
+                ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.g.adjacencyMatrix[vertex, other_vertex])
                 identity_support_v_vect[self.edge_list.index(e), 0] = 1
         ket_psi_v = ket_psi_v / np.linalg.norm(ket_psi_v, 2)
         if not vertex == 0 and not vertex == self.g.n*2 - 1:
