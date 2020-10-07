@@ -80,16 +80,18 @@ class GluedTree(Graph):
             j += 0.5
 
     def fill_bipartite_sets(self):
-        running_counter = 0
-        flipper = False
-        for i in range(2*self.n):
-            for j in range(running_counter, 2**min(i, 2*(2**self.n-1)-1-i)):
-                if i%2 == 0:
-                    self.B.add(running_counter + j)
-                else:
-                    self.A.add(running_counter + j)
-            running_counter += j
-            
+        # Sorts the vertices into their bipartite sets, with the set alternating based on layer, with 0 in A
+        for i in range(2**self.n-1):
+            if int(np.log2(i+1))%2 == 0:
+                self.A.add(i)
+            else:
+                self.B.add(i)
+        for i in range(2**self.n - 1, 2*(2**self.n - 1)):
+            if int(np.log2(2*(2**self.n - 1) - i)) % 2 == 0:
+                self.B.add(i)
+            else:
+                self.A.add(i)
+        
 
 class ReducedGluedTree(Graph):
     """This is the class we'll probably be doing most of our analysis on"""
