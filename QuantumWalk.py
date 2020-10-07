@@ -10,7 +10,7 @@ from qiskit.visualization import plot_histogram
 
 from GluedTrees import Graph
 
-
+# THERE IS SOME ERROR IN THE CONSTRUCTION OF THE QUANTUM WALK OPERATOR!!!!!!
 class QuantumWalk:
     def __init__(self, g):
         self.g = g
@@ -34,6 +34,8 @@ class QuantumWalk:
             else:
                 R_A += self.diffuser(i)
         # Setting the quantum walk operator to be R_AR_B
+        print(R_B)
+        print(R_A)
         self.quantumWalkOperator = R_A.dot(R_B)
 
     def diffuser(self, vertex):
@@ -48,6 +50,8 @@ class QuantumWalk:
                 identity_support_v_vect[self.edge_list.index(e), 0] = 1
         ket_psi_v = ket_psi_v / np.linalg.norm(ket_psi_v, 2)
         if not vertex == 0 and not vertex == self.g.n*2 - 1:
+            print(ket_psi_v)
+            # ERROR LOCATED!!!!!!!! identity_supportvector doesn't give the identity when it's outer producted. Will fix later.
             return identity_support_v_vect.dot(identity_support_v_vect.T) - 2 * ket_psi_v.dot(ket_psi_v.T)
         else:
             return identity_support_v_vect.dot(identity_support_v_vect.T)
