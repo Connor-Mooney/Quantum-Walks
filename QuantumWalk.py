@@ -20,22 +20,26 @@ class QuantumWalk:
         self.set_up_quantum_walk_operator()
 
     # Need to rejigger this to work with G' rather than G
+    # I think it has been sufficiently modified
     def set_up_quantum_walk_operator(self):
         # Here we're going to set up the edge space and then make R_BR_A
-        for i in range(list(self.g.adjacencyMatrix.shape)[0]):
-            for j in range(i, list(self.g.adjacencyMatrix.shape)[1]):
-                if self.g.adjacencyMatrix[i, j] > 0:
+        for i in range(list(self.modifiedAdjacencyMatrix.shape)[0]):
+            for j in range(i, list(self.modifiedAdjacencyMatrix.shape)[1]):
+                if self.modifiedAdjacencyMatrix[i, j] > 0:
                     self.edge_list.append({i, j})
         # Now time to create the quantum walk operators
         R_B = np.identity(len(self.edge_list))
         R_A = np.identity(len(self.edge_list))
         # This generates R_B and R_A for general bipartite graphs
-        for i in range(2 * self.g.n):
-            if i in self.g.B:
+        for i in range(np.shape(self.modifiedAdjacencyMatrix)[0]):
+            if i in self.g.B or i == 0:
                 R_B += self.diffuser(i)
             else:
                 R_A += self.diffuser(i)
         # Setting the quantum walk operator to be R_AR_B
+       # print(np.array2string(R_B, max_line_width=np.infty))
+       # print(np.array2string(R_A, max_line_width=np.infty))
+
         self.quantumWalkOperator = R_A.dot(R_B)
 
     def diffuser(self, vertex):
@@ -45,9 +49,9 @@ class QuantumWalk:
         for e in self.edge_list:
             if vertex in e:
                 (other_vertex, ) = e.difference({vertex})
-                ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.g.adjacencyMatrix[vertex, other_vertex])
+                ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.modifiedAdjacencyMatrix[vertex, other_vertex])
         ket_psi_v = ket_psi_v / np.linalg.norm(ket_psi_v, 2)
-        if not vertex == 0 and not vertex == self.g.n*2 - 1:
+        if not vertex == 0 and not vertex == np.shape(self.modifiedAdjacencyMatrix)[0]-1:
             return -2 * ket_psi_v.dot(ket_psi_v.T)
         else:
             return np.zeros((len(self.edge_list), len(self.edge_list)))
@@ -65,7 +69,7 @@ class QuantumWalk:
         for m in self.g.marked_set:
             self.modifiedAdjacencyMatrix[-1, m+1] = 1/x
             self.modifiedAdjacencyMatrix[m+1, -1] = 1/x
-        print(np.array2string(self.modifiedAdjacencyMatrix, max_line_width=np.infty))
+       # print(np.array2string(self.modifiedAdjacencyMatrix, max_line_width=np.infty))
 
     def phase_estimation(self, ancilla_bits, starting_state):
         # need to think this through
