@@ -2,18 +2,20 @@ import numpy as np
 
 
 class Graph:
-    def __init__(self, n):
+    def __init__(self, n, start_set: set, marked_set: set):
         self.n = n
         self.adjacencyMatrix = None
         self.fill_adjacency_matrix()
         self.A = set()
         self.B = set()
+        self.start_set = start_set
+        self.marked_set = marked_set
         self.fill_bipartite_sets()
         
     def fill_adjacency_matrix(self):
         pass
 
-    def fill_bipartite_sets():
+    def fill_bipartite_sets(self):
         pass
     
     def display(self):
@@ -24,8 +26,8 @@ class GluedTree(Graph):
     """This class gives full binary glued trees where each tree has depth n,
         and the leaves of each tree is connected to two leaves of the other tree randomly.
     """
-    def __init__(self, n):
-        super().__init__(n)
+    def __init__(self, n, start_set, marked_set):
+        super().__init__(n, start_set, marked_set)
 
     def fill_adjacency_matrix(self):
 
@@ -95,8 +97,8 @@ class GluedTree(Graph):
 
 class ReducedGluedTree(Graph):
     """This is the class we'll probably be doing most of our analysis on"""
-    def __init__(self, n):
-        super().__init__(n)
+    def __init__(self, n, start_set: set, marked_set: set):
+        super().__init__(n, start_set, marked_set)
 
     def fill_adjacency_matrix(self):
         self.adjacencyMatrix = np.zeros((2*self.n, 2*self.n))

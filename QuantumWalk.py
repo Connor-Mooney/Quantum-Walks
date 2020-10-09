@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# importing Qiskit
+# importing qiskit
 from qiskit import IBMQ, Aer
 from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, execute
 
@@ -11,12 +11,15 @@ from qiskit.visualization import plot_histogram
 from GluedTrees import Graph
 
 class QuantumWalk:
-    def __init__(self, g):
+    def __init__(self, g, eta, x):
         self.g = g
+        self.modifiedAdjacencyMatrix = None
+        self.set_up_modified_adjacency_matrix(eta, x)
         self.quantumWalkOperator = None
         self.edge_list = []
         self.set_up_quantum_walk_operator()
 
+    # Need to rejigger this to work with G' rather than G
     def set_up_quantum_walk_operator(self):
         # Here we're going to set up the edge space and then make R_BR_A
         for i in range(list(self.g.adjacencyMatrix.shape)[0]):
@@ -48,6 +51,21 @@ class QuantumWalk:
             return -2 * ket_psi_v.dot(ket_psi_v.T)
         else:
             return np.zeros((len(self.edge_list), len(self.edge_list)))
+
+    def set_up_modified_adjacency_matrix(self, eta, x):
+        # Sets up the modified adjacency matrix of G' according to Piddock's protocol in section 4
+        # Notice how this only works for uniform initial distributions. That could be changed later if necessary
+        self.modifiedAdjacencyMatrix = np.zeros((np.shape(self.g.adjacencyMatrix)[0]+2, np.shape(self.g.adjacencyMatrix)[1]+2))
+        for i in range(1, np.shape(self.g.adjacencyMatrix)[0]+1):
+            for j in range(1, np.shape(self.g.adjacencyMatrix)[0]+1):
+                self.modifiedAdjacencyMatrix[i, j] = self.g.adjacencyMatrix[i-1, j-1]
+        for s in self.g.start_set:
+            self.modifiedAdjacencyMatrix[0, s+1] = np.sqrt(len(self.g.start_set))/eta
+            self.modifiedAdjacencyMatrix[s+1, 0] = np.sqrt(len(self.g.start_set))/eta
+        for m in self.g.marked_set:
+            self.modifiedAdjacencyMatrix[-1, m+1] = 1/x
+            self.modifiedAdjacencyMatrix[m+1, -1] = 1/x
+        print(np.array2string(self.modifiedAdjacencyMatrix, max_line_width=np.infty))
 
     def phase_estimation(self, ancilla_bits, starting_state):
         # need to think this through
