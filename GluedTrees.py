@@ -66,20 +66,21 @@ class GluedTree(Graph):
             self.adjacencyMatrix[2*2**self.n - 3 - i, 2*2**self.n - 3 - int(next_layer + 2*(i-(2**layer_num - 1)) + 1)] = 1
             self.adjacencyMatrix[2*2**self.n - 3 - int(next_layer + 2*(i-(2**layer_num - 1)) + 1), 2*2**self.n - 3 - i] = 1
         # Next comes making the cycle that actually "glues" the trees together
-        cycle_array = []
-        for i in range (2**self.n-1, 2**self.n - 1 + 2**(self.n - 1)):
-            # Making an array with every leaf of the 2nd tree twice
-            cycle_array.append(i)
-            cycle_array.append(i)
+        for i in range(2**(self.n-1)-1, 2**self.n-1):
+            # fills out the ``glue'' in a specific way (think |x| repeated over and over again)
+            if i % 2 == 1:
+                print(i)
+                self.adjacencyMatrix[i, 2**(self.n-1) + i] = 1
+                self.adjacencyMatrix[i, 2**(self.n-1) + i + 1] = 1
+                self.adjacencyMatrix[2**(self.n-1) + i, i] = 1
+                self.adjacencyMatrix[2**(self.n-1) + i + 1, i] = 1
+            else:
+                self.adjacencyMatrix[i, 2**(self.n-1) + i] = 1
+                self.adjacencyMatrix[i, 2**(self.n-1) + i - 1] = 1
+                self.adjacencyMatrix[2**(self.n-1) + i - 1, i] = 1
+                self.adjacencyMatrix[2**(self.n-1) + i, i] = 1
+
         j = 2**(self.n - 1) - 1
-        while not len(cycle_array) == 0:
-            # Assigning two of the leaves to each leaf.
-            # This doesn't really work always, because it may re-pick the same leaf so that needs fixing
-            # But as for now, we aren't using this class for our calculations, we can worry about that later
-            temp = cycle_array.pop(np.random.randint(len(cycle_array)))
-            self.adjacencyMatrix[int(np.floor(j)), temp] = 1
-            self.adjacencyMatrix[temp, int(np.floor(j))] = 1
-            j += 0.5
 
     def fill_bipartite_sets(self):
         # Sorts the vertices into their bipartite sets, with the set alternating based on layer, with 0 in A
