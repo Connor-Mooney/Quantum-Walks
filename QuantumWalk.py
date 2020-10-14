@@ -28,23 +28,27 @@ class QuantumWalk:
                 if self.modifiedAdjacencyMatrix[i, j] > 0:
                     self.edge_list.append({i, j})
         # Now time to create the quantum walk operators
-        R_B = np.identity(len(self.edge_list))
-        R_A = np.identity(len(self.edge_list))
+        R_B = np.identity(len(self.edge_list), dtype=np.complex128)
+        R_A = np.identity(len(self.edge_list), dtype=np.complex128)
         # This generates R_B and R_A for general bipartite graphs
+        print(self.g.B)
         for i in range(np.shape(self.modifiedAdjacencyMatrix)[0]):
-            if i in self.g.B or i == 0:
+
+            if i-1 in self.g.B or i == 0:
                 R_B += self.diffuser(i)
             else:
                 R_A += self.diffuser(i)
         # Setting the quantum walk operator to be R_AR_B
-       # print(np.array2string(R_B, max_line_width=np.infty))
-       # print(np.array2string(R_A, max_line_width=np.infty))
+        print("R_B: \n")
+        print(np.array2string(np.round(R_B, 3), max_line_width=np.infty))
+        print("\n R_A: \n")
+        print(np.array2string(np.round(R_A, 3), max_line_width=np.infty))
 
         self.quantumWalkOperator = R_A.dot(R_B)
 
     def diffuser(self, vertex):
         # we need to define ket_psi_v
-        ket_psi_v = np.zeros((len(self.edge_list), 1))
+        ket_psi_v = np.zeros((len(self.edge_list), 1), dtype=np.complex128)
         # Filling out ket_psi_v on the subspace we want
         for e in self.edge_list:
             if vertex in e:

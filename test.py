@@ -1,6 +1,7 @@
 from GluedTrees import ReducedGluedTree, GluedTree
 from QuantumWalk import QuantumWalk
 import numpy as np
+import scipy as sp
 from heapq import nsmallest
 from matplotlib import pyplot as plt
 
@@ -11,9 +12,16 @@ def eff_res(n):
         r += 2.*2.**(-i)
     r += 2.**(-n)
     return r
-n = 4
-g = GluedTree(3, {0}, {2*2**(n-1)-1})
+
+n = 2
+print(2*(2**n - 1) - 1)
+g = GluedTree(n, {0}, {2*(2**n - 1) - 1})
 print(np.array2string(g.adjacencyMatrix, max_line_width=np.infty))
+
+qw = QuantumWalk(g, eff_res(3)/2, eff_res(3)/2)
+print(np.array2string(qw.modifiedAdjacencyMatrix, max_line_width= np.infty))
+print(np.array2string(np.round(qw.quantumWalkOperator, 3), max_line_width=np.infty))
+print(sp.linalg.eigvals(qw.quantumWalkOperator))
 
 #phase_gaps = []
 #num_qubits = []
