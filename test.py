@@ -8,20 +8,22 @@ from matplotlib import pyplot as plt
 def eff_res(n):
     # returns the effective resistance
     r = 0
-    for i in range(n):
-        r += 2.*2.**(-i)
+    for i in range(n-1):
+        r += 2.*2.**(-i-1)
     r += 2.**(-n)
+    print("EFFECTIVE RESISTANCE: {}".format(r))
     return r
 
 n = 2
-print(2*(2**n - 1) - 1)
+#print(2*(2**n - 1) - 1)
 g = GluedTree(n, {0}, {2*(2**n - 1) - 1})
-print(np.array2string(g.adjacencyMatrix, max_line_width=np.infty))
+#print(np.array2string(g.adjacencyMatrix, max_line_width=np.infty))
 
-qw = QuantumWalk(g, eff_res(3)/2, eff_res(3)/2)
+qw = QuantumWalk(g, eff_res(2)/2, eff_res(2)/2)
 print(np.array2string(qw.modifiedAdjacencyMatrix, max_line_width= np.infty))
 print(np.array2string(np.round(qw.quantumWalkOperator, 3), max_line_width=np.infty))
 print(sp.linalg.eigvals(qw.quantumWalkOperator))
+
 
 #phase_gaps = []
 #num_qubits = []

@@ -31,7 +31,7 @@ class QuantumWalk:
         R_B = np.identity(len(self.edge_list), dtype=np.complex128)
         R_A = np.identity(len(self.edge_list), dtype=np.complex128)
         # This generates R_B and R_A for general bipartite graphs
-        print(self.g.B)
+        #print(self.g.B)
         for i in range(np.shape(self.modifiedAdjacencyMatrix)[0]):
 
             if i-1 in self.g.B or i == 0:
@@ -39,10 +39,10 @@ class QuantumWalk:
             else:
                 R_A += self.diffuser(i)
         # Setting the quantum walk operator to be R_AR_B
-        print("R_B: \n")
-        print(np.array2string(np.round(R_B, 3), max_line_width=np.infty))
-        print("\n R_A: \n")
-        print(np.array2string(np.round(R_A, 3), max_line_width=np.infty))
+       # print("R_B: \n")
+        #print(np.array2string(np.round(R_B, 3), max_line_width=np.infty))
+        #print("\n R_A: \n")
+        #print(np.array2string(np.round(R_A, 3), max_line_width=np.infty))
 
         self.quantumWalkOperator = R_A.dot(R_B)
 
@@ -56,6 +56,7 @@ class QuantumWalk:
                 ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.modifiedAdjacencyMatrix[vertex, other_vertex])
         ket_psi_v = ket_psi_v / np.linalg.norm(ket_psi_v, 2)
         if not vertex == 0 and not vertex == np.shape(self.modifiedAdjacencyMatrix)[0]-1:
+            print(ket_psi_v)
             return -2 * ket_psi_v.dot(ket_psi_v.T)
         else:
             return np.zeros((len(self.edge_list), len(self.edge_list)))
