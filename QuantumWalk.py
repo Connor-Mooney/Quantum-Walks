@@ -77,9 +77,4 @@ class QuantumWalk:
        # print(np.array2string(self.modifiedAdjacencyMatrix, max_line_width=np.infty))
 
     def phase_estimation(self, ancilla_bits, starting_state):
-        # need to think this through
-        phase_estimator = QuantumCircuit(ancilla_bits + 2**np.ceiling(np.log2(len(self.edge_list))), ancilla_bits)
-        # Initialise starting state
-
-        # Run through
-        phase_estimator.draw()
+        # We can just use qiskit.circuit.library.PhaseEstimation on our operator that we embed into an n qubit space
