@@ -1,5 +1,9 @@
 from GluedTrees import ReducedGluedTree, GluedTree
 from QuantumWalk import QuantumWalk
+from qiskit import execute
+from qiskit.visualization import plot_histogram
+from qiskit import IBMQ, Aer
+import matplotlib.figure as fig
 import numpy as np
 import scipy as sp
 from heapq import nsmallest
@@ -25,14 +29,20 @@ print(eff_res(2))
 #print(np.array2string(np.round(qw.quantumWalkOperator, 3), max_line_width=np.infty))
 #print(sp.linalg.eigvals(qw.quantumWalkOperator))
 
-
+sim = Aer.get_backend('qasm_simulator')
 phase_gaps = []
 num_qubits = []
 i = 2
 redg = ReducedGluedTree(i, {0}, {2*i - 1})
 qw = QuantumWalk(redg, eff_res(i)/2, eff_res(i)/2)
-phase_estimator = qw.phase_estimation(4, [1, 0, 0, 0, 0])
+phase_estimator = qw.phase_estimation(6, [1, 0, 0, 0, 0])
 print(phase_estimator.draw(output="text"))
+job = execute(phase_estimator, sim, shots=1000)
+res = job.result()
+counts = res.get_counts(phase_estimator)
+print(counts)
+plot_histogram(counts)
+plt.show()
 # for i in range(2, 100):
 #     #print("{}%".format(i*2/3))
 #     #si_s = np.zeros((2*i+1, 1))

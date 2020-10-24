@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 # importing qiskit
 from qiskit import IBMQ, Aer
 from qiskit.circuit.library import PhaseEstimation
-from qiskit import QuantumCircuit, QuantumRegister
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 
 # import basic plot tools
 from qiskit.visualization import plot_histogram
@@ -90,10 +90,10 @@ class QuantumWalk:
         reg = QuantumRegister(num_operator_qubits)
         unitary_circuit = QuantumCircuit(reg)
         unitary_circuit.unitary(unitary_matrix, reg)
-
+        print("Set up Unitary Quantum Walk Gate ...")
         # Setting up the Phase Estimation
         QPE = PhaseEstimation(ancilla_bits, unitary_circuit)
-
+        print("Set up Phase Estimation Circuit ...")
         # Initializing the state we are to run Phase Estimation on
         # Getting the ancilla and actual registers used in the QPE circuit
         ancillae = QPE.qubits[0].register
@@ -108,4 +108,10 @@ class QuantumWalk:
         # Appending the initializer circuit to front of circuit
         initializer.initialize(starting_state_proper, edge_register)
         QPE = initializer.combine(QPE)
+        print("Initialized starting state ...")
+        # Adding Measurement
+        print("Running simulation ...")
+        Measurement_Register = ClassicalRegister(ancilla_bits)
+        QPE = QPE.combine(QuantumCircuit(Measurement_Register))
+        QPE.measure(ancillae, Measurement_Register)
         return QPE
