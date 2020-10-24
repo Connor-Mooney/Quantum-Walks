@@ -1,13 +1,8 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 # importing qiskit
-from qiskit import IBMQ, Aer
 from qiskit.circuit.library import PhaseEstimation
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
-
-# import basic plot tools
-from qiskit.visualization import plot_histogram
 
 from GluedTrees import Graph
 
