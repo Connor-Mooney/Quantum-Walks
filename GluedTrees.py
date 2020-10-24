@@ -114,7 +114,7 @@ class ReducedGluedTree(Graph):
             
     def fill_bipartite_sets(self):
         for i in range(2 * self.n):
-            if i%2 == 0:
+            if i % 2 == 0:
                 self.A.add(i)
             else:
                 self.B.add(i)

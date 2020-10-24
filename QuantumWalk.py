@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 
 # importing qiskit
 from qiskit import IBMQ, Aer
-from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, execute
+from qiskit.circuit.library import PhaseEstimation
+from qiskit import QuantumCircuit, QuantumRegister
 
 # import basic plot tools
 from qiskit.visualization import plot_histogram
@@ -56,7 +57,7 @@ class QuantumWalk:
                 ket_psi_v[self.edge_list.index(e), 0] = np.sqrt(self.modifiedAdjacencyMatrix[vertex, other_vertex])
         ket_psi_v = ket_psi_v / np.linalg.norm(ket_psi_v, 2)
         if not vertex == 0 and not vertex == np.shape(self.modifiedAdjacencyMatrix)[0]-1:
-            print(ket_psi_v)
+            #print(ket_psi_v)
             return -2 * ket_psi_v.dot(ket_psi_v.T)
         else:
             return np.zeros((len(self.edge_list), len(self.edge_list)))
@@ -78,3 +79,33 @@ class QuantumWalk:
 
     def phase_estimation(self, ancilla_bits, starting_state):
         # We can just use qiskit.circuit.library.PhaseEstimation on our operator that we embed into an n qubit space
+        #Finding number of qubits needed to encode all edge states
+        num_operator_qubits = int(np.ceil(np.log2(self.quantumWalkOperator.shape[0])))
+        # Embedding R_BR_A into the space of the qubits
+        unitary_matrix = np.identity(2**num_operator_qubits, dtype=np.complex128)
+        for i in range(self.quantumWalkOperator.shape[0]):
+            for j in range(self.quantumWalkOperator.shape[1]):
+                unitary_matrix[i, j] = self.quantumWalkOperator[i, j]
+        # Setting up the Unitary Operator as a circuit
+        reg = QuantumRegister(num_operator_qubits)
+        unitary_circuit = QuantumCircuit(reg)
+        unitary_circuit.unitary(unitary_matrix, reg)
+
+        # Setting up the Phase Estimation
+        QPE = PhaseEstimation(ancilla_bits, unitary_circuit)
+
+        # Initializing the state we are to run Phase Estimation on
+        # Getting the ancilla and actual registers used in the QPE circuit
+        ancillae = QPE.qubits[0].register
+        edge_register = QPE.qubits[-1].register
+
+        # Setting up the initializations we need
+        initializer = QuantumCircuit(ancillae, edge_register)
+        starting_state_proper = np.zeros(2**num_operator_qubits)
+        for i in range(num_operator_qubits):
+            starting_state_proper[i] = starting_state[i]
+
+        # Appending the initializer circuit to front of circuit
+        initializer.initialize(starting_state_proper, edge_register)
+        QPE = initializer.combine(QPE)
+        return QPE
