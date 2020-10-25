@@ -7,6 +7,21 @@ from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from GluedTrees import Graph
 
 class QuantumWalk:
+    """ A class that gives all the relevant quantum walk information for a walk on a given graph
+        Parameters:
+            g: the graph
+            eta: the parameter eta from Piddock's Quantum Walk
+            x: x from Piddock's Quantum Walk
+    
+        Local Variables:
+            quantumWalkOperator: R_BR_A from Piddock's Quantum Walk
+            
+        Methods:
+            phase_estimation:
+                Parameters:
+                    ancilla_bits: the number of ancilla bits
+                    starting_state: the edge state we run our phase estimation on
+    """
     def __init__(self, g, eta, x):
         self.g = g
         self.modifiedAdjacencyMatrix = None
@@ -15,8 +30,6 @@ class QuantumWalk:
         self.edge_list = []
         self.set_up_quantum_walk_operator()
 
-    # Need to rejigger this to work with G' rather than G
-    # I think it has been sufficiently modified
     def set_up_quantum_walk_operator(self):
         # Here we're going to set up the edge space and then make R_BR_A
         for i in range(list(self.modifiedAdjacencyMatrix.shape)[0]):
@@ -73,6 +86,16 @@ class QuantumWalk:
        # print(np.array2string(self.modifiedAdjacencyMatrix, max_line_width=np.infty))
 
     def phase_estimation(self, ancilla_bits, starting_state):
+        """
+            Creates the phase estimation circuit given starting state and number of ancilla bits
+            
+            Parameters:
+                ancilla_bits (int): number of ancilla bits
+                starting_state (numpy array): starting state as a superposition over edges
+                
+            Returns:
+                QPE (QuantumCircuit): the quantum phase estimation circuit
+        """
         # We can just use qiskit.circuit.library.PhaseEstimation on our operator that we embed into an n qubit space
         #Finding number of qubits needed to encode all edge states
         num_operator_qubits = int(np.ceil(np.log2(self.quantumWalkOperator.shape[0])))
