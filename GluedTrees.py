@@ -2,6 +2,17 @@ import numpy as np
 
 
 class Graph:
+    """
+        This class gives an adjacency matrix formulation of a bipartite graph.
+        
+        Local Variables:
+            n : some parameter needed to generate graph
+            start_set: the set of the starting vertices for the walk
+            marked_set: the set of the marked vertices for the walk
+            A: one of the bipartite sets
+            B: the other bipartite set
+            adjacencyMatrix: the graph's adjacency matrix
+    """
     def __init__(self, n, start_set: set, marked_set: set):
         self.n = n
         self.adjacencyMatrix = None
@@ -13,12 +24,15 @@ class Graph:
         self.fill_bipartite_sets()
         
     def fill_adjacency_matrix(self):
+        """To be implemented in child classes. Populates adjacencyMatrix"""
         pass
 
     def fill_bipartite_sets(self):
+        """To be implemented in child classes. Populates A and B."""
         pass
     
     def display(self):
+        """Displays the adjacency matrix"""
         print(self.adjacencyMatrix)
 
 
@@ -41,6 +55,7 @@ class GluedTree(Graph):
                 .
                 .
                 .
+        And then doing the same for another tree, then gluing.
         """
         self.adjacencyMatrix = np.zeros((2*(2**self.n - 1), 2*(2**self.n - 1)))
         for i in range(2**(self.n-1)-1):
@@ -97,7 +112,8 @@ class GluedTree(Graph):
         
 
 class ReducedGluedTree(Graph):
-    """This is the class we'll probably be doing most of our analysis on"""
+    """Generates a reduced glued tree, that is the glued tree projected onto the row spaces,
+    which gives a directed line graph."""
     def __init__(self, n, start_set: set, marked_set: set):
         super().__init__(n, start_set, marked_set)
 
